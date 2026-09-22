@@ -17,7 +17,6 @@ plugins {
 }
 
 include(":commons:repository")
-include(":eventsourcing-core")
 include(":kuirlibro:app")
 include(":kuirlibro:domain")
 
