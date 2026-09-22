@@ -16,8 +16,8 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
+include(":app")
 include(":commons:repository")
-include(":kuirlibro:app")
-include(":kuirlibro:domain")
+include(":domain")
 
 rootProject.name = "fuder"
