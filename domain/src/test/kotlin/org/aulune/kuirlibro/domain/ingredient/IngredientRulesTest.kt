@@ -5,8 +5,10 @@ import org.aulune.kuirlibro.domain.MeasurementKind
 import org.aulune.kuirlibro.domain.NutritionFacts
 import org.aulune.kuirlibro.domain.NutritionValue
 import org.aulune.kuirlibro.domain.ObjectKey
+import org.aulune.kuirlibro.domain.Price
 import org.junit.jupiter.api.Nested
 import java.math.BigDecimal
+import java.util.Currency
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,8 +22,9 @@ private val nutrition = NutritionFacts(
     fat = NutritionValue(BigDecimal("1")).getOrNull()!!,
     carbs = NutritionValue(BigDecimal("76.3")).getOrNull()!!,
 )
+private val price = Price(BigDecimal("2.50"), Currency.getInstance("USD")).getOrNull()!!
 
-private fun created(): Ingredient = IngredientRules.create(id, name, MeasurementKind.MASS, nutrition).getOrNull()!!
+private fun created(): Ingredient = IngredientRules.create(id, name, MeasurementKind.MASS, nutrition, price).getOrNull()!!
 
 class IngredientRulesTest {
 
@@ -30,12 +33,20 @@ class IngredientRulesTest {
 
         @Nested
         inner class `when creating it` {
-            private val result = IngredientRules.create(id, name, MeasurementKind.MASS, nutrition)
+            private val result = IngredientRules.create(id, name, MeasurementKind.MASS, nutrition, price)
 
             @Test
             fun `then an active ingredient with those details is produced`() {
                 assertEquals(
-                    Ingredient(id, name, MeasurementKind.MASS, nutrition, image = null, IngredientStatus.ACTIVE),
+                    Ingredient(
+                        id,
+                        name,
+                        MeasurementKind.MASS,
+                        nutrition,
+                        price,
+                        image = null,
+                        IngredientStatus.ACTIVE,
+                    ),
                     result.getOrNull(),
                 )
             }
@@ -48,12 +59,17 @@ class IngredientRulesTest {
 
         @Nested
         inner class `when updating it` {
-            private val result = IngredientRules.update(ingredient, otherName, NutritionFacts.ZERO, image)
+            private val result = IngredientRules.update(ingredient, otherName, NutritionFacts.ZERO, null, image)
 
             @Test
-            fun `then its name, nutrition and image change`() {
+            fun `then its name, nutrition, price and image change`() {
                 assertEquals(
-                    ingredient.copy(name = otherName, nutritionPerUnit = NutritionFacts.ZERO, image = image),
+                    ingredient.copy(
+                        name = otherName,
+                        nutritionPerUnit = NutritionFacts.ZERO,
+                        pricePerUnit = null,
+                        image = image,
+                    ),
                     result.getOrNull(),
                 )
             }
@@ -86,7 +102,7 @@ class IngredientRulesTest {
 
         @Nested
         inner class `when updating it` {
-            private val result = IngredientRules.update(ingredient, otherName, NutritionFacts.ZERO, image)
+            private val result = IngredientRules.update(ingredient, otherName, NutritionFacts.ZERO, price, image)
 
             @Test
             fun `then it fails with AlreadyDeleted`() {

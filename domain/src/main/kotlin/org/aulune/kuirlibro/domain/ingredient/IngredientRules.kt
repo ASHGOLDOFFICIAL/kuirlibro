@@ -7,33 +7,44 @@ import arrow.core.raise.ensure
 import org.aulune.kuirlibro.domain.ImageRef
 import org.aulune.kuirlibro.domain.MeasurementKind
 import org.aulune.kuirlibro.domain.NutritionFacts
+import org.aulune.kuirlibro.domain.Price
 
 /**
  * Pure state transitions for an [Ingredient].
  */
 object IngredientRules {
 
-    /** A new, active ingredient with [id], [name], [measurementKind] and
-     * [nutritionPerUnit]. */
+    /** A new, active ingredient with [id], [name], [measurementKind], [nutritionPerUnit] and
+     * [pricePerUnit]. */
     fun create(
         id: IngredientId,
         name: IngredientName,
         measurementKind: MeasurementKind,
         nutritionPerUnit: NutritionFacts,
+        pricePerUnit: Price?,
     ): Either<IngredientError, Ingredient> = either {
-        Ingredient(id, name, measurementKind, nutritionPerUnit, image = null, status = IngredientStatus.ACTIVE)
+        Ingredient(
+            id = id,
+            name = name,
+            measurementKind = measurementKind,
+            nutritionPerUnit = nutritionPerUnit,
+            pricePerUnit = pricePerUnit,
+            image = null,
+            status = IngredientStatus.ACTIVE,
+        )
     }
 
-    /** [current] with its name, nutritional content and image replaced by [name],
-     * [nutritionPerUnit] and [image]. */
+    /** [current] with its name, nutritional content, price and image replaced by [name],
+     * [nutritionPerUnit], [pricePerUnit] and [image]. */
     fun update(
         current: Ingredient,
         name: IngredientName,
         nutritionPerUnit: NutritionFacts,
+        pricePerUnit: Price?,
         image: ImageRef?,
     ): Either<IngredientError, Ingredient> = either {
         ensureActive(current)
-        current.copy(name = name, nutritionPerUnit = nutritionPerUnit, image = image)
+        current.copy(name = name, nutritionPerUnit = nutritionPerUnit, pricePerUnit = pricePerUnit, image = image)
     }
 
     /** [current] soft-deleted. */
