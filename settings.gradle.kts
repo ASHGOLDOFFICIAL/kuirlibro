@@ -20,4 +20,4 @@ include(":app")
 include(":commons:repository")
 include(":domain")
 
-rootProject.name = "fuder"
+rootProject.name = "kuirlibro"
